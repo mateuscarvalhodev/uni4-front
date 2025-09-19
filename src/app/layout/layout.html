@@ -1,0 +1,15 @@
+<header class="hdr">
+  <div class="brand">UNI4</div>
+  <nav class="nav">
+    <a routerLink="/app/users" routerLinkActive="active">Usuários</a>
+    <a routerLink="/app/matriz" routerLinkActive="active">Matriz</a>
+    <a routerLink="/app/cursos" routerLinkActive="active">Cursos</a>
+  </nav>
+</header>
+
+<main class="main">
+  <app-loading-bar></app-loading-bar>
+  <app-toasts></app-toasts>
+
+  <router-outlet></router-outlet>
+</main>

@@ -1,0 +1,33 @@
+:host {
+  display: contents;
+}
+.hdr {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  border-bottom: 1px solid #222;
+  background: #111;
+}
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.nav {
+  display: flex;
+  gap: 12px;
+}
+.nav a {
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #ddd;
+}
+.nav a.active {
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+}
+.main {
+  padding: 16px;
+  display: block;
+}

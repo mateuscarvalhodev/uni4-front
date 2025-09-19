@@ -1,47 +1,30 @@
-// src/app/app.routes.ts
-import { Routes, CanActivateFn } from '@angular/router';
-import { inject, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import Keycloak from 'keycloak-js';
-import { environment } from '../environments/environment';
-
-const authGuard: CanActivateFn = async () => {
-  const platformId = inject(PLATFORM_ID);
-  if (!isPlatformBrowser(platformId) || !environment.authEnabled) return true;
-  const kc = inject(Keycloak) as Keycloak;
-  return !!kc.authenticated;
-};
-
-const roleGuard = (roles: string[]): CanActivateFn => {
-  return async () => {
-    const platformId = inject(PLATFORM_ID);
-    if (!isPlatformBrowser(platformId) || !environment.authEnabled) return true;
-    const kc = inject(Keycloak) as Keycloak;
-    const token: any = kc.tokenParsed ?? {};
-    const userRoles: string[] = token?.realm_access?.roles ?? [];
-    return roles.some((r) => userRoles.includes(r));
-  };
-};
+import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const appRoutes: Routes = [
-  {
-    path: '',
-    loadComponent: () => import('./pages/home.page').then((m) => m.HomePage),
-  },
+  { path: 'login', loadComponent: () => import('./pages/login').then((m) => m.LoginPage) },
+  { path: '', pathMatch: 'full', redirectTo: 'login' },
 
   {
-    path: 'users',
-    loadComponent: () => import('./features/users/users-list').then((m) => m.UsersList),
+    path: 'app',
+    canActivate: [authGuard],
+    loadComponent: () => import('./layout/layout').then((m) => m.LayoutComponent),
+    children: [
+      {
+        path: 'users',
+        loadComponent: () => import('./features/users/users-list').then((m) => m.UsersList),
+      },
+      {
+        path: 'matriz',
+        loadComponent: () => import('./pages/matriz.page').then((m) => m.MatrizPage),
+      },
+      {
+        path: 'cursos',
+        loadComponent: () => import('./pages/cursos.page').then((m) => m.CursosPage),
+      },
+      { path: '', pathMatch: 'full', redirectTo: 'users' },
+    ],
   },
-  // {
-  //   path: 'matriz',
-  //   canActivate: [authGuard],
-  //   loadComponent: () => import('./pages/matriz.page').then((m) => m.MatrizPage),
-  // },
-  // {
-  //   path: 'cursos',
-  //   canActivate: [authGuard, roleGuard(['COORDENADOR', 'ADMIN'])],
-  //   loadComponent: () => import('./pages/cursos.page').then((m) => m.CursosPage),
-  // },
-  { path: '**', redirectTo: '' },
+
+  { path: '**', redirectTo: 'login' },
 ];

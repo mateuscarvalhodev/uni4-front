@@ -1,0 +1,61 @@
+<section class="login">
+  <div class="panel">
+    <div class="brand">
+      <div class="logo" aria-hidden="true">U4</div>
+      <div>
+        <h1 class="title">UNI4</h1>
+        <p class="subtitle">Acesse sua conta</p>
+      </div>
+    </div>
+
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="voce@uni4.dev"
+          [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          [attr.aria-describedby]="form.controls.email.invalid ? 'email-err' : null"
+          autocomplete="username"
+          required
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+        <div id="email-err" class="err">Informe um email válido.</div>
+        }
+      </div>
+
+      <div class="field">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="••••••••"
+          [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+          [attr.aria-describedby]="form.controls.password.invalid ? 'pass-err' : null"
+          autocomplete="current-password"
+          minlength="4"
+          required
+        />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+        <div id="pass-err" class="err">Informe a senha (mín. 4).</div>
+        }
+      </div>
+
+      <button class="btn btn--primary" [disabled]="form.invalid" type="submit" aria-label="Entrar">
+        Entrar
+      </button>
+
+      <div class="foot">
+        <a routerLink="/" class="link">Voltar à página inicial</a>
+      </div>
+    </form>
+  </div>
+
+  <aside class="aside" aria-hidden="true">
+    <h2>Bem-vindo!</h2>
+    <p>Gerencie usuários, cursos, disciplinas e a matriz curricular com praticidade.</p>
+  </aside>
+</section>
