@@ -1,0 +1,36 @@
+<section class="page">
+  <header class="page__header">
+    <h2>Usuários</h2>
+    <div class="actions">
+      <button class="btn" type="button" (click)="reload()">Recarregar</button>
+      <a class="btn btn--primary" routerLink="/users/new">Novo</a>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="table">
+      <div class="table__head">
+        <div>Nome</div>
+        <div>Email</div>
+        <div>Papel</div>
+        <div class="right">Ações</div>
+      </div>
+
+      @if (vm().length) { @for (u of vm(); track u.id) {
+      <div class="table__row">
+        <div>{{ u.name }}</div>
+        <div>{{ u.email }}</div>
+        <div>
+          <span class="chip" [attr.data-role]="u.role">{{ u.role }}</span>
+        </div>
+        <div class="right">
+          <a class="btn" [routerLink]="['/users', u.id, 'edit']">Editar</a>
+          <button class="btn btn--danger" type="button" (click)="remove(u.id)">Excluir</button>
+        </div>
+      </div>
+      } } @else {
+      <div class="empty">Nenhum usuário encontrado.</div>
+      }
+    </div>
+  </div>
+</section>

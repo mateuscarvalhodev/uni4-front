@@ -1,0 +1,10 @@
+{
+  "users": [
+    { "id": 1, "name": "Admin", "email": "admin@uni4.dev", "role": "ADMIN" },
+    { "id": 2, "name": "Carla", "email": "carla@uni4.dev", "role": "COORDENADOR" },
+    { "id": 3, "name": "Paulo", "email": "paulo@uni4.dev", "role": "PROFESSOR" }
+  ],
+  "semesters": [{ "id": 1, "label": "2025.1" }],
+  "courses": [{ "id": 1, "name": "Engenharia", "semesterId": 1 }],
+  "subjects": [{ "id": 1, "name": "Cálculo I", "courseId": 1 }]
+}
