@@ -23,12 +23,21 @@ export const appRoutes: Routes = [
       },
 
       {
-        path: 'matriz',
-        loadComponent: () => import('./pages/matriz.page').then((m) => m.MatrizPage),
+        path: 'cursos',
+        loadComponent: () => import('./features/courses/courses-list').then((m) => m.CoursesList),
       },
       {
-        path: 'cursos',
-        loadComponent: () => import('./pages/cursos.page').then((m) => m.CursosPage),
+        path: 'cursos/new',
+        loadComponent: () => import('./features/courses/courses-form').then((m) => m.CoursesForm),
+      },
+      {
+        path: 'cursos/:id/edit',
+        loadComponent: () => import('./features/courses/courses-form').then((m) => m.CoursesForm),
+      },
+
+      {
+        path: 'matriz',
+        loadComponent: () => import('./pages/matriz.page').then((m) => m.MatrizPage),
       },
 
       { path: '', pathMatch: 'full', redirectTo: 'users' },

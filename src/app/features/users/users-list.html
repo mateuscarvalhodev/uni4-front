@@ -3,7 +3,7 @@
     <h2>Usuários</h2>
     <div class="actions">
       <button class="btn" type="button" (click)="reload()">Recarregar</button>
-      <a class="btn btn--primary" routerLink="/users/new">Novo</a>
+      <a class="btn btn--primary" routerLink="/app/users/new">Novo</a>
     </div>
   </header>
 
@@ -24,7 +24,7 @@
           <span class="chip" [attr.data-role]="u.role">{{ u.role }}</span>
         </div>
         <div class="right">
-          <a class="btn" [routerLink]="['/users', u.id, 'edit']">Editar</a>
+          <a class="btn" [routerLink]="['/app/users', u.id, 'edit']">Editar</a>
           <button class="btn btn--danger" type="button" (click)="remove(u.id)">Excluir</button>
         </div>
       </div>

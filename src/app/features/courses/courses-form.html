@@ -1,0 +1,33 @@
+<section class="page">
+  <header class="page__header">
+    <h2>{{ isEdit() ? 'Editar curso' : 'Novo curso' }}</h2>
+  </header>
+
+  <div class="card">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form">
+      <label for="name">Nome</label>
+      <input
+        id="name"
+        type="text"
+        formControlName="name"
+        placeholder="Ex.: Sistemas de Informação"
+      />
+      @if (form.controls.name.touched && form.controls.name.invalid) {
+      <div class="err">Informe o nome.</div>
+      }
+
+      <label for="code">Código</label>
+      <input id="code" type="text" formControlName="code" placeholder="Ex.: SI" />
+      @if (form.controls.code.touched && form.controls.code.invalid) {
+      <div class="err">Informe o código.</div>
+      }
+
+      <div class="actions">
+        <a class="btn" routerLink="/app/cursos">Cancelar</a>
+        <button class="btn btn--primary" [disabled]="form.invalid">
+          {{ isEdit() ? 'Salvar' : 'Criar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
