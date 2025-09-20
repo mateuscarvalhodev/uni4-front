@@ -99,10 +99,15 @@ label {
   font-weight: 600;
 }
 
+.input-wrap {
+  position: relative;
+  display: grid;
+}
+
 input {
   appearance: none;
   width: 100%;
-  padding: 10px 12px;
+  padding: 10px 44px 10px 12px;
   border-radius: 10px;
   border: 2px solid #94a3b8;
   background: color-mix(in srgb, var(--panel) 92%, #000 8%);
@@ -120,9 +125,39 @@ input:focus {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 28%, transparent);
 }
 
+.icon-btn {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 32px;
+  width: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.icon-btn:hover {
+  color: var(--text);
+}
+.icon-btn:focus-visible {
+  outline: none;
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 28%, transparent);
+}
+.icon-btn svg {
+  fill: currentColor;
+}
+
 .err {
   color: var(--error);
   font-size: 0.9rem;
+}
+.err.center {
+  text-align: center;
 }
 
 .btn {

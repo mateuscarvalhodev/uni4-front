@@ -16,15 +16,27 @@ export class LoginPage {
   private auth = inject(AuthService);
   private router = inject(Router);
 
+  showPassword = false;
+
   form = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(4)]],
   });
 
+  togglePassword() {
+    this.showPassword = !this.showPassword;
+  }
+
   async submit() {
     if (this.form.invalid) return;
     const { email, password } = this.form.value;
-    await this.auth.login(email!, password!);
-    this.router.navigate(['/app/users']);
+    const ok = await this.auth.login(email!, password!);
+    if (ok) {
+      this.router.navigate(['/app/users']);
+    } else {
+      this.form.setErrors({ invalidCreds: true });
+      this.form.controls.password.setErrors({ invalid: true });
+      alert('Credenciais inválidas. Use dev@uni4.com / 123456');
+    }
   }
 }

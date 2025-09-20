@@ -1,10 +1,21 @@
 export const environment = {
   production: true,
-  apiBaseUrl: '/api',
+  apiBaseUrl: 'https://api.seu-dominio.com',
+  authEnabled: true,
   keycloak: {
-    url: 'http://keycloak:8080',
-    realm: 'academico',
-    clientId: 'frontend-spa',
+    url: 'https://keycloak.seu-dominio.com',
+    realm: 'uni4',
+    clientId: 'uni4-frontend',
   },
-  authEnabled: false,
+  fakeAuth: {
+    enabled: false,
+    email: '',
+    password: '',
+    user: {
+      id: 0,
+      name: '',
+      email: '',
+      role: 'ALUNO' as const,
+    },
+  },
 };

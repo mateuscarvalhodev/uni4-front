@@ -2,8 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './guards/auth.guard';
 
 export const appRoutes: Routes = [
-  { path: 'login', loadComponent: () => import('./pages/login').then((m) => m.LoginPage) },
-  { path: '', pathMatch: 'full', redirectTo: 'login' },
+  { path: '', pathMatch: 'full', redirectTo: 'app/users' },
 
   {
     path: 'app',
@@ -26,5 +25,6 @@ export const appRoutes: Routes = [
     ],
   },
 
-  { path: '**', redirectTo: 'login' },
+  { path: 'login', loadComponent: () => import('./pages/login').then((m) => m.LoginPage) },
+  { path: '**', redirectTo: 'app/users' },
 ];

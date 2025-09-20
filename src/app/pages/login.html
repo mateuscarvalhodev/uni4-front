@@ -15,7 +15,7 @@
           id="email"
           type="email"
           formControlName="email"
-          placeholder="voce@uni4.dev"
+          placeholder="dev@uni4.com"
           [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
           [attr.aria-describedby]="form.controls.email.invalid ? 'email-err' : null"
           autocomplete="username"
@@ -28,17 +28,44 @@
 
       <div class="field">
         <label for="password">Senha</label>
-        <input
-          id="password"
-          type="password"
-          formControlName="password"
-          placeholder="••••••••"
-          [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
-          [attr.aria-describedby]="form.controls.password.invalid ? 'pass-err' : null"
-          autocomplete="current-password"
-          minlength="4"
-          required
-        />
+
+        <div class="input-wrap">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="123456"
+            [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+            [attr.aria-describedby]="form.controls.password.invalid ? 'pass-err' : null"
+            autocomplete="current-password"
+            minlength="4"
+            required
+          />
+
+          <button
+            type="button"
+            class="icon-btn"
+            (click)="togglePassword()"
+            [attr.aria-pressed]="showPassword"
+            [attr.aria-label]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+            [title]="showPassword ? 'Ocultar senha' : 'Mostrar senha'"
+          >
+            @if (!showPassword) {
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <path
+                d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10Z"
+              />
+            </svg>
+            } @else {
+            <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+              <path
+                d="M3 3l18 18M10.6 10.6a3 3 0 0 0 4.24 4.24M9.88 5.5A8.6 8.6 0 0 1 12 5c7 0 10 7 10 7a17.1 17.1 0 0 1-4.06 4.89M6.1 7.34A17.2 17.2 0 0 0 2 12s3 7 10 7c1.17 0 2.27-.17 3.28-.48"
+              />
+            </svg>
+            }
+          </button>
+        </div>
+
         @if (form.controls.password.touched && form.controls.password.invalid) {
         <div id="pass-err" class="err">Informe a senha (mín. 4).</div>
         }
