@@ -14,6 +14,15 @@ export const appRoutes: Routes = [
         loadComponent: () => import('./features/users/users-list').then((m) => m.UsersList),
       },
       {
+        path: 'users/new',
+        loadComponent: () => import('./features/users/users-form').then((m) => m.UsersForm),
+      },
+      {
+        path: 'users/:id/edit',
+        loadComponent: () => import('./features/users/users-form').then((m) => m.UsersForm),
+      },
+
+      {
         path: 'matriz',
         loadComponent: () => import('./pages/matriz.page').then((m) => m.MatrizPage),
       },
@@ -21,6 +30,7 @@ export const appRoutes: Routes = [
         path: 'cursos',
         loadComponent: () => import('./pages/cursos.page').then((m) => m.CursosPage),
       },
+
       { path: '', pathMatch: 'full', redirectTo: 'users' },
     ],
   },

@@ -1,0 +1,51 @@
+.page {
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+}
+.page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card {
+  border: 1px solid #222;
+  border-radius: 12px;
+  padding: 16px;
+}
+.form {
+  display: grid;
+  gap: 10px;
+}
+input,
+select {
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  background: #1a1a1a;
+  color: #fff;
+}
+.actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.btn {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  color: #fff;
+  text-decoration: none;
+  cursor: pointer;
+}
+.btn--primary {
+  background: #0ea5e9;
+  border-color: #0ea5e9;
+  color: #001018;
+}
+.err {
+  color: #f87171;
+  font-size: 0.9rem;
+}
