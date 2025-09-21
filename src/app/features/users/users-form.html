@@ -1,37 +1,66 @@
 <section class="page">
   <header class="page__header">
     <h2>{{ isEdit() ? 'Editar usuário' : 'Novo usuário' }}</h2>
+    <a class="btn btn--ghost" routerLink="/app/users">Voltar</a>
   </header>
 
   <div class="card">
-    <form [formGroup]="form" (ngSubmit)="save()" class="form">
-      <label for="name">Nome</label>
-      <input id="name" type="text" formControlName="name" placeholder="Nome completo" />
-      @if (form.controls.name.touched && form.controls.name.invalid) {
-      <div class="err">Informe o nome.</div>
-      }
-
-      <label for="email">Email</label>
-      <input id="email" type="email" formControlName="email" placeholder="email@uni4.com" />
-      @if (form.controls.email.touched && form.controls.email.invalid) {
-      <div class="err">Informe um email válido.</div>
-      }
-
-      <label for="role">Papel</label>
-      <select id="role" formControlName="role">
-        <option [ngValue]="''" disabled>Selecione...</option>
-        @for (r of roles; track r) {
-        <option [value]="r">{{ r }}</option>
+    <form [formGroup]="form" (ngSubmit)="save()" class="form" novalidate>
+      <div class="field">
+        <label for="name">Nome</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Nome completo"
+          [attr.aria-invalid]="form.controls.name.invalid && form.controls.name.touched"
+          [attr.aria-describedby]="form.controls.name.invalid ? 'name-err' : null"
+          required
+        />
+        @if (form.controls.name.touched && form.controls.name.invalid) {
+        <div id="name-err" class="err">Informe o nome.</div>
         }
-      </select>
-      @if (form.controls.role.touched && form.controls.role.invalid) {
-      <div class="err">Selecione um papel.</div>
-      }
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="email@uni4.com"
+          [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
+          [attr.aria-describedby]="form.controls.email.invalid ? 'email-err' : null"
+          required
+        />
+        @if (form.controls.email.touched && form.controls.email.invalid) {
+        <div id="email-err" class="err">Informe um email válido.</div>
+        }
+      </div>
+
+      <div class="field">
+        <label for="role">Papel</label>
+        <select
+          id="role"
+          formControlName="role"
+          [attr.aria-invalid]="form.controls.role.invalid && form.controls.role.touched"
+          [attr.aria-describedby]="form.controls.role.invalid ? 'role-err' : null"
+          required
+        >
+          <option [ngValue]="''" disabled>Selecione...</option>
+          @for (r of roles; track r) {
+          <option [value]="r">{{ r }}</option>
+          }
+        </select>
+        @if (form.controls.role.touched && form.controls.role.invalid) {
+        <div id="role-err" class="err">Selecione um papel.</div>
+        }
+      </div>
 
       <div class="actions">
-        <a class="btn" routerLink="/app/users">Cancelar</a>
+        <a class="btn btn--ghost" routerLink="/app/users">Cancelar</a>
         <button class="btn btn--primary" [disabled]="form.invalid">
-          {{ isEdit() ? 'Salvar' : 'Criar' }}
+          {{ isEdit() ? 'Salvar alterações' : 'Criar usuário' }}
         </button>
       </div>
     </form>

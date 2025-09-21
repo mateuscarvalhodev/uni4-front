@@ -1,31 +1,52 @@
 <section class="page">
   <header class="page__header">
     <h2>{{ isEdit() ? 'Editar semestre' : 'Novo semestre' }}</h2>
+    <a class="btn btn--ghost" routerLink="/app/semestres">Voltar</a>
   </header>
 
   <div class="card">
-    <form [formGroup]="form" (ngSubmit)="save()" class="form">
-      <label for="course">Curso</label>
-      <select id="course" formControlName="courseId">
-        <option [ngValue]="null" disabled>Selecione...</option>
-        @for (c of courses(); track c.id) {
-        <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+    <form [formGroup]="form" (ngSubmit)="save()" class="form" novalidate>
+      <div class="field">
+        <label for="course">Curso</label>
+        <select
+          id="course"
+          formControlName="courseId"
+          [attr.aria-invalid]="form.controls.courseId.invalid && form.controls.courseId.touched"
+          [attr.aria-describedby]="form.controls.courseId.invalid ? 'course-err' : null"
+          required
+        >
+          <option [ngValue]="null" disabled>Selecione...</option>
+          @for (c of courses(); track c.id) {
+          <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+          }
+        </select>
+        @if (form.controls.courseId.touched && form.controls.courseId.invalid) {
+        <div id="course-err" class="err">Selecione um curso.</div>
         }
-      </select>
-      @if (form.controls.courseId.touched && form.controls.courseId.invalid) {
-      <div class="err">Selecione um curso.</div>
-      }
+      </div>
 
-      <label for="index">Índice (1..N)</label>
-      <input id="index" type="number" formControlName="index" min="1" />
-      @if (form.controls.index.touched && form.controls.index.invalid) {
-      <div class="err">Informe um índice válido (>= 1).</div>
-      }
+      <div class="field">
+        <label for="index">Índice do semestre</label>
+        <input
+          id="index"
+          type="number"
+          formControlName="index"
+          min="1"
+          placeholder="Ex.: 1"
+          [attr.aria-invalid]="form.controls.index.invalid && form.controls.index.touched"
+          [attr.aria-describedby]="form.controls.index.invalid ? 'index-err' : null"
+          required
+        />
+        @if (form.controls.index.touched && form.controls.index.invalid) {
+        <div id="index-err" class="err">Informe um índice válido (≥ 1).</div>
+        }
+        <p class="hint">Use 1 para o primeiro semestre, 2 para o segundo, e assim por diante.</p>
+      </div>
 
       <div class="actions">
-        <a class="btn" routerLink="/app/semestres">Cancelar</a>
+        <a class="btn btn--ghost" routerLink="/app/semestres">Cancelar</a>
         <button class="btn btn--primary" [disabled]="form.invalid">
-          {{ isEdit() ? 'Salvar' : 'Criar' }}
+          {{ isEdit() ? 'Salvar alterações' : 'Criar semestre' }}
         </button>
       </div>
     </form>

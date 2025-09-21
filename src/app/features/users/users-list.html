@@ -18,8 +18,8 @@
 
       @if (vm().length) { @for (u of vm(); track u.id) {
       <div class="table__row">
-        <div>{{ u.name }}</div>
-        <div>{{ u.email }}</div>
+        <div class="u-name">{{ u.name }}</div>
+        <div class="u-email">{{ u.email }}</div>
         <div>
           <span class="chip" [attr.data-role]="u.role">{{ u.role }}</span>
         </div>

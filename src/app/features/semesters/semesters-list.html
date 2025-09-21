@@ -28,8 +28,12 @@
 
       @if (vm().length) { @for (s of vm(); track s.id) {
       <div class="table__row">
-        <div>{{ s.courseName }}</div>
-        <div>{{ s.index }}</div>
+        <div class="course">
+          <div class="course__name">{{ s.courseName }}</div>
+        </div>
+        <div class="index">
+          <span class="badge">{{ s.index }}</span>
+        </div>
         <div class="right">
           <a class="btn" [routerLink]="['/app/semestres', s.id, 'edit']">Editar</a>
           <button class="btn btn--danger" type="button" (click)="remove(s.id)">Excluir</button>
