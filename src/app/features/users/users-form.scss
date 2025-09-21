@@ -71,6 +71,24 @@ select:focus {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 28%, transparent);
 }
 
+select {
+  padding: 12px 42px 12px 14px;
+  border: 2px solid color-mix(in srgb, var(--border) 70%, #000 30%);
+  background: linear-gradient(0deg, transparent 50%, rgba(255, 255, 255, 0.02) 100%),
+    color-mix(in srgb, var(--panel) 92%, #000 8%);
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03);
+}
+
+select:hover {
+  background: linear-gradient(0deg, transparent 50%, rgba(255, 255, 255, 0.03) 100%),
+    color-mix(in srgb, var(--panel) 88%, #000 12%);
+  border-color: color-mix(in srgb, var(--border) 50%, var(--focus) 50%);
+}
+
 .err {
   color: var(--error);
   font-size: 0.92rem;
