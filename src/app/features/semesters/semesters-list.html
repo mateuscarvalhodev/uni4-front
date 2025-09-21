@@ -1,0 +1,43 @@
+<section class="page">
+  <header class="page__header">
+    <h2>Semestres</h2>
+    <div class="actions">
+      <label class="sr-only" for="fCourse">Curso</label>
+      <select
+        id="fCourse"
+        [value]="filterCourseId() === 'all' ? 'all' : filterCourseId()"
+        #fc
+        (change)="setFilter(fc.value)"
+      >
+        <option value="all">Todos os cursos</option>
+        @for (c of coursesOptions(); track c.id) {
+        <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+        }
+      </select>
+      <a class="btn btn--primary" routerLink="/app/semestres/new">Novo</a>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="table">
+      <div class="table__head">
+        <div>Curso</div>
+        <div>Índice</div>
+        <div class="right">Ações</div>
+      </div>
+
+      @if (vm().length) { @for (s of vm(); track s.id) {
+      <div class="table__row">
+        <div>{{ s.courseName }}</div>
+        <div>{{ s.index }}</div>
+        <div class="right">
+          <a class="btn" [routerLink]="['/app/semestres', s.id, 'edit']">Editar</a>
+          <button class="btn btn--danger" type="button" (click)="remove(s.id)">Excluir</button>
+        </div>
+      </div>
+      } } @else {
+      <div class="empty">Nenhum semestre cadastrado.</div>
+      }
+    </div>
+  </div>
+</section>

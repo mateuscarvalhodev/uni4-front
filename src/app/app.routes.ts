@@ -37,7 +37,54 @@ export const appRoutes: Routes = [
 
       {
         path: 'matriz',
-        loadComponent: () => import('./pages/matriz.page').then((m) => m.MatrizPage),
+        loadComponent: () =>
+          import('./features/curriculum/curriculum-builder').then((m) => m.CurriculumBuilder),
+      },
+      {
+        path: 'matriz/:courseId',
+        loadComponent: () =>
+          import('./features/curriculum/curriculum-builder').then((m) => m.CurriculumBuilder),
+      },
+      {
+        path: 'matriz',
+        loadComponent: () =>
+          import('./features/curriculum/curriculum-builder').then((m) => m.CurriculumBuilder),
+      },
+      {
+        path: 'matriz/:courseId',
+        loadComponent: () =>
+          import('./features/curriculum/curriculum-builder').then((m) => m.CurriculumBuilder),
+      },
+      {
+        path: 'disciplinas',
+        loadComponent: () =>
+          import('./features/disciplines/disciplines-list').then((m) => m.DisciplinesList),
+      },
+      {
+        path: 'disciplinas/new',
+        loadComponent: () =>
+          import('./features/disciplines/disciplines-form').then((m) => m.DisciplinesForm),
+      },
+      {
+        path: 'disciplinas/:id/edit',
+        loadComponent: () =>
+          import('./features/disciplines/disciplines-form').then((m) => m.DisciplinesForm),
+      },
+
+      {
+        path: 'semestres',
+        loadComponent: () =>
+          import('./features/semesters/semesters-list').then((m) => m.SemestersList),
+      },
+      {
+        path: 'semestres/new',
+        loadComponent: () =>
+          import('./features/semesters/semesters-form').then((m) => m.SemestersForm),
+      },
+      {
+        path: 'semestres/:id/edit',
+        loadComponent: () =>
+          import('./features/semesters/semesters-form').then((m) => m.SemestersForm),
       },
 
       { path: '', pathMatch: 'full', redirectTo: 'users' },

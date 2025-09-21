@@ -1,15 +1,33 @@
 <header class="hdr">
-  <div class="brand">UNI4</div>
+  <a class="brand" routerLink="/app/users">UNI4</a>
+
   <nav class="nav">
-    <a routerLink="/app/users" routerLinkActive="active">Usuários</a>
-    <a routerLink="/app/matriz" routerLinkActive="active">Matriz</a>
-    <a routerLink="/app/cursos" routerLinkActive="active">Cursos</a>
+    @if (canViewUsers()) {
+    <a routerLink="/app/users" routerLinkActive="active" aria-current="page">Usuários</a>
+    } @if (canManageCourses()) {
+    <a routerLink="/app/cursos" routerLinkActive="active" aria-current="page">Cursos</a>
+    } @if (canManageDisciplines()) {
+    <a routerLink="/app/disciplinas" routerLinkActive="active" aria-current="page">Disciplinas</a>
+    } @if (canManageSemesters()) {
+    <a routerLink="/app/semestres" routerLinkActive="active" aria-current="page">Semestres</a>
+    } @if (canViewMatrix()) {
+    <a routerLink="/app/matriz" routerLinkActive="active" aria-current="page">Matriz</a>
+    }
   </nav>
+
+  <div class="spacer"></div>
+
+  <div class="user">
+    <div class="user__name">
+      Olá, {{ user()?.name || 'Visitante' }}
+      <span class="role">({{ role() }})</span>
+    </div>
+    <button class="btn btn--ghost" type="button" (click)="logout()">Sair</button>
+  </div>
 </header>
 
 <main class="main">
   <app-loading-bar></app-loading-bar>
   <app-toasts></app-toasts>
-
   <router-outlet></router-outlet>
 </main>

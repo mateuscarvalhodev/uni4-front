@@ -1,6 +1,7 @@
 :host {
   display: contents;
 }
+
 .hdr {
   display: flex;
   align-items: center;
@@ -9,25 +10,79 @@
   border-bottom: 1px solid #222;
   background: #111;
 }
+
 .brand {
   font-weight: 800;
   letter-spacing: 0.5px;
+  color: #e5e7eb;
+  text-decoration: none;
 }
+
 .nav {
   display: flex;
-  gap: 12px;
+  gap: 10px;
+  flex-wrap: wrap;
 }
+
 .nav a {
   padding: 6px 10px;
   border-radius: 8px;
   text-decoration: none;
   color: #ddd;
+  border: 1px solid transparent;
 }
+
 .nav a.active {
   background: #2a2a2a;
   border: 1px solid #3a3a3a;
 }
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.user__name {
+  color: #cbd5e1;
+  font-weight: 600;
+}
+.role {
+  opacity: 0.8;
+  font-weight: 500;
+  margin-left: 4px;
+}
+
+.btn {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #3a3a3a;
+  background: #1f2937;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: #334155;
+  color: #e2e8f0;
+}
+
+.btn--ghost:hover {
+  background: #1f2937;
+}
+
 .main {
   padding: 16px;
   display: block;
+}
+
+@media (max-width: 720px) {
+  .user__name {
+    display: none;
+  }
 }

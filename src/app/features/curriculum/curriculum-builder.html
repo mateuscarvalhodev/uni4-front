@@ -1,0 +1,62 @@
+<section class="page">
+  <header class="page__header">
+    <h2>Matriz Curricular</h2>
+
+    <div class="actions">
+      <label class="sr-only" for="course">Curso</label>
+      <select
+        id="course"
+        [value]="courseId() ?? ''"
+        #courseSel
+        (change)="onCourseChange(courseSel.value)"
+      >
+        <option value="" disabled>Selecione um curso</option>
+        @for (c of courses(); track c.id) {
+        <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+        }
+      </select>
+      <a class="btn" routerLink="/app/cursos">Gerenciar cursos</a>
+    </div>
+  </header>
+
+  @if (!courseId()) {
+  <div class="empty">Selecione um curso para montar a matriz.</div>
+  } @else {
+  <div class="grid">
+    @for (s of items(); track trackBySem($index, s)) {
+    <div class="col">
+      <div class="col__head">Semestre {{ s.index }}</div>
+
+      <div class="list">
+        @if (s.disciplines.length) { @for (d of s.disciplines; track d.itemId) {
+        <div class="row">
+          <div class="row__name">{{ d.discipline.name }}</div>
+          <div class="row__code">{{ d.discipline.code }}</div>
+          <button class="btn btn--danger sm" type="button" (click)="remove(d.itemId)">
+            Remover
+          </button>
+        </div>
+        } } @else {
+        <div class="muted">Sem disciplinas.</div>
+        }
+      </div>
+
+      <div class="adder">
+        <select
+          [value]="selection()[s.id] ?? ''"
+          #sel
+          (change)="onSelectDiscipline(s.id, sel.value)"
+        >
+          <option value="" disabled>Adicionar disciplina...</option>
+          @for (d of disciplines(); track d.id) {
+          <option [value]="d.id">{{ d.name }} ({{ d.code }})</option>
+          }
+        </select>
+
+        <button class="btn btn--primary sm" type="button" (click)="add(s.id)">Adicionar</button>
+      </div>
+    </div>
+    }
+  </div>
+  }
+</section>

@@ -1,0 +1,31 @@
+<section class="page">
+  <header class="page__header">
+    <h2>Disciplinas</h2>
+    <div class="actions">
+      <a class="btn btn--primary" routerLink="/app/disciplinas/new">Nova</a>
+    </div>
+  </header>
+
+  <div class="card">
+    <div class="table">
+      <div class="table__head">
+        <div>Nome</div>
+        <div>Código</div>
+        <div class="right">Ações</div>
+      </div>
+
+      @if (vm().length) { @for (d of vm(); track d.id) {
+      <div class="table__row">
+        <div>{{ d.name }}</div>
+        <div>{{ d.code }}</div>
+        <div class="right">
+          <a class="btn" [routerLink]="['/app/disciplinas', d.id, 'edit']">Editar</a>
+          <button class="btn btn--danger" type="button" (click)="remove(d.id)">Excluir</button>
+        </div>
+      </div>
+      } } @else {
+      <div class="empty">Nenhuma disciplina cadastrada.</div>
+      }
+    </div>
+  </div>
+</section>

@@ -1,0 +1,33 @@
+<section class="page">
+  <header class="page__header">
+    <h2>{{ isEdit() ? 'Editar semestre' : 'Novo semestre' }}</h2>
+  </header>
+
+  <div class="card">
+    <form [formGroup]="form" (ngSubmit)="save()" class="form">
+      <label for="course">Curso</label>
+      <select id="course" formControlName="courseId">
+        <option [ngValue]="null" disabled>Selecione...</option>
+        @for (c of courses(); track c.id) {
+        <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+        }
+      </select>
+      @if (form.controls.courseId.touched && form.controls.courseId.invalid) {
+      <div class="err">Selecione um curso.</div>
+      }
+
+      <label for="index">Índice (1..N)</label>
+      <input id="index" type="number" formControlName="index" min="1" />
+      @if (form.controls.index.touched && form.controls.index.invalid) {
+      <div class="err">Informe um índice válido (>= 1).</div>
+      }
+
+      <div class="actions">
+        <a class="btn" routerLink="/app/semestres">Cancelar</a>
+        <button class="btn btn--primary" [disabled]="form.invalid">
+          {{ isEdit() ? 'Salvar' : 'Criar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
