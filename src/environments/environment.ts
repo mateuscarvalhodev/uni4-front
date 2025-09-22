@@ -1,7 +1,6 @@
 export const environment = {
   production: false,
-  apiBaseUrl: '/api',
-  // authBaseUrl: '/auth',
+  apiBaseUrl: 'http://localhost:8080',
   authBaseUrl: 'http://localhost:8080/auth',
   authEnabled: true,
   keycloak: {

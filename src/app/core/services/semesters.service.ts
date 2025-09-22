@@ -1,5 +1,7 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Observable, map } from 'rxjs';
 
 export interface Semester {
   id: number;
@@ -7,67 +9,35 @@ export interface Semester {
   index: number;
 }
 
-const STORAGE_KEY = 'uni4.semesters';
-const seed: Semester[] = [
-  { id: 1, courseId: 1, index: 1 },
-  { id: 2, courseId: 1, index: 2 },
-  { id: 3, courseId: 2, index: 1 },
-];
-
 @Injectable({ providedIn: 'root' })
 export class SemestersService {
-  private store = new BehaviorSubject<Semester[]>(this.load());
-
-  private load(): Semester[] {
-    if (typeof window === 'undefined') return seed;
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
-      return seed;
-    }
-    try {
-      return JSON.parse(raw) as Semester[];
-    } catch {
-      return seed;
-    }
-  }
-  private persist(list: Semester[]) {
-    if (typeof window !== 'undefined') localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  }
+  private http = inject(HttpClient);
+  private base = `${(environment as any).coreBaseUrl || environment.apiBaseUrl}/semesters`;
 
   list(): Observable<Semester[]> {
-    return this.store.asObservable();
+    return this.http.get<Semester[]>(this.base);
   }
+
   byCourse(courseId: number): Observable<Semester[]> {
-    const r = this.store.value
-      .filter((s) => s.courseId === courseId)
-      .sort((a, b) => a.index - b.index);
-    return of(r);
+    const params = new HttpParams().set('courseId', String(courseId));
+    return this.http
+      .get<Semester[]>(this.base, { params })
+      .pipe(map((rows) => rows.sort((a, b) => a.index - b.index)));
   }
+
   get(id: number): Observable<Semester> {
-    return of(this.store.value.find((s) => s.id === id)!);
+    return this.http.get<Semester>(`${this.base}/${id}`);
   }
 
   create(dto: Omit<Semester, 'id'>): Observable<Semester> {
-    const list = [...this.store.value];
-    const id = (list.at(-1)?.id ?? 0) + 1;
-    const s: Semester = { id, ...dto };
-    list.push(s);
-    this.store.next(list);
-    this.persist(list);
-    return of(s);
+    return this.http.post<Semester>(this.base, dto);
   }
+
   update(id: number, dto: Partial<Omit<Semester, 'id'>>): Observable<Semester> {
-    const list = this.store.value.map((s) => (s.id === id ? { ...s, ...dto } : s));
-    const updated = list.find((s) => s.id === id)!;
-    this.store.next(list);
-    this.persist(list);
-    return of(updated);
+    return this.http.put<Semester>(`${this.base}/${id}`, dto);
   }
+
   remove(id: number): Observable<void> {
-    const list = this.store.value.filter((s) => s.id !== id);
-    this.store.next(list);
-    this.persist(list);
-    return of(void 0);
+    return this.http.delete<void>(`${this.base}/${id}`);
   }
 }
