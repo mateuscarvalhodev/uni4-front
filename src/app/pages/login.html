@@ -10,19 +10,19 @@
 
     <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
       <div class="field">
-        <label for="email">Email</label>
+        <label for="username">Usuário</label>
         <input
-          id="email"
-          type="email"
-          formControlName="email"
-          placeholder="dev@uni4.com"
-          [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
-          [attr.aria-describedby]="form.controls.email.invalid ? 'email-err' : null"
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="admin1"
+          [attr.aria-invalid]="form.controls.username.invalid && form.controls.username.touched"
+          [attr.aria-describedby]="form.controls.username.invalid ? 'username-err' : null"
           autocomplete="username"
           required
         />
-        @if (form.controls.email.touched && form.controls.email.invalid) {
-        <div id="email-err" class="err">Informe um email válido.</div>
+        @if (form.controls.username.touched && form.controls.username.invalid) {
+        <div id="username-err" class="err">Informe o usuário.</div>
         }
       </div>
 
@@ -71,9 +71,18 @@
         }
       </div>
 
-      <button class="btn btn--primary" [disabled]="form.invalid" type="submit" aria-label="Entrar">
+      <button
+        class="btn btn--primary"
+        [disabled]="form.invalid || submitting"
+        type="submit"
+        aria-label="Entrar"
+      >
         Entrar
       </button>
+
+      @if (form.errors?.['invalidCreds']) {
+      <div class="err center">Credenciais inválidas.</div>
+      }
 
       <div class="foot">
         <a routerLink="/" class="link">Voltar à página inicial</a>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../core/auth/auth.service';
+import { catchError, of, finalize } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -16,27 +17,35 @@ export class LoginPage {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  showPassword = false;
-
   form = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
+    username: ['', [Validators.required]],
     password: ['', [Validators.required, Validators.minLength(4)]],
   });
+
+  submitting = false;
+  showPassword = false;
 
   togglePassword() {
     this.showPassword = !this.showPassword;
   }
 
-  async submit() {
-    if (this.form.invalid) return;
-    const { email, password } = this.form.value;
-    const ok = await this.auth.login(email!, password!);
-    if (ok) {
-      this.router.navigate(['/app/users']);
-    } else {
-      this.form.setErrors({ invalidCreds: true });
-      this.form.controls.password.setErrors({ invalid: true });
-      alert('Credenciais inválidas. Use dev@uni4.com / 123456');
-    }
+  submit() {
+    if (this.form.invalid || this.submitting) return;
+    this.submitting = true;
+
+    const { username, password } = this.form.value;
+    this.auth
+      .login$(username!, password!)
+      .pipe(
+        catchError(() => {
+          this.form.setErrors({ invalidCreds: true });
+          return of(false);
+        }),
+        finalize(() => (this.submitting = false))
+      )
+      .subscribe((ok) => {
+        if (ok) this.router.navigate(['/app/users']);
+        else this.form.setErrors({ invalidCreds: true });
+      });
   }
 }

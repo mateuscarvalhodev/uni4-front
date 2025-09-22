@@ -62,7 +62,8 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "uni4-frontend:build:production"
+              "buildTarget": "uni4-frontend:build:production",
+              "proxyConfig": "proxy.conf.json"
             },
             "development": {
               "buildTarget": "uni4-frontend:build:development"
