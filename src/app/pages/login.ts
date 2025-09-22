@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../core/auth/auth.service';
-import { catchError, of, finalize } from 'rxjs';
+import { catchError, finalize, of, tap } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -31,21 +31,28 @@ export class LoginPage {
 
   submit() {
     if (this.form.invalid || this.submitting) return;
+    this.form.setErrors(null);
     this.submitting = true;
 
     const { username, password } = this.form.value;
+
     this.auth
       .login$(username!, password!)
       .pipe(
+        tap((ok) => {
+          if (ok) {
+            const ret = this.router.routerState.snapshot.root.queryParams['returnUrl'];
+            this.router.navigateByUrl(ret || '/app/users');
+          } else {
+            this.form.setErrors({ invalidCreds: true });
+          }
+        }),
         catchError(() => {
           this.form.setErrors({ invalidCreds: true });
-          return of(false);
+          return of(null);
         }),
         finalize(() => (this.submitting = false))
       )
-      .subscribe((ok) => {
-        if (ok) this.router.navigate(['/app/users']);
-        else this.form.setErrors({ invalidCreds: true });
-      });
+      .subscribe();
   }
 }
