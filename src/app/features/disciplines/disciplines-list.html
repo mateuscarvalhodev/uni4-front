@@ -2,6 +2,7 @@
   <header class="page__header">
     <h2>Disciplinas</h2>
     <div class="actions">
+      <button class="btn" type="button" (click)="reload()">Recarregar</button>
       <a class="btn btn--primary" routerLink="/app/disciplinas/new">Nova</a>
     </div>
   </header>
@@ -10,7 +11,7 @@
     <div class="table">
       <div class="table__head">
         <div>Nome</div>
-        <div>Código</div>
+        <div>Carga</div>
         <div class="right">Ações</div>
       </div>
 
@@ -18,7 +19,7 @@
       <div class="table__row">
         <div class="d-name">{{ d.name }}</div>
         <div>
-          <span class="chip">{{ d.code }}</span>
+          <span class="chip">{{ d.hours }}h</span>
         </div>
         <div class="right">
           <a class="btn" [routerLink]="['/app/disciplinas', d.id, 'edit']">Editar</a>

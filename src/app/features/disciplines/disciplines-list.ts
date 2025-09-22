@@ -16,10 +16,16 @@ export class DisciplinesList implements OnInit {
   vm = computed(() => this.rows());
 
   ngOnInit() {
+    this.reload();
+  }
+
+  reload() {
     this.svc.list().subscribe((d) => this.rows.set(d));
   }
 
   remove(id: number) {
-    if (confirm('Excluir disciplina?')) this.svc.remove(id).subscribe();
+    if (confirm('Excluir disciplina?')) {
+      this.svc.remove(id).subscribe(() => this.reload());
+    }
   }
 }

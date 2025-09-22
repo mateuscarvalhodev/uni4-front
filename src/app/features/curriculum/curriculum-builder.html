@@ -31,7 +31,7 @@
         @if (s.disciplines.length) { @for (d of s.disciplines; track d.itemId) {
         <div class="row">
           <div class="row__name">{{ d.discipline.name }}</div>
-          <div class="row__code">{{ d.discipline.code }}</div>
+          <div class="row__code">{{ d.discipline.hours }}</div>
           <button class="btn btn--danger sm" type="button" (click)="remove(d.itemId)">
             Remover
           </button>
@@ -49,7 +49,7 @@
         >
           <option value="" disabled>Adicionar disciplina...</option>
           @for (d of disciplines(); track d.id) {
-          <option [value]="d.id">{{ d.name }} ({{ d.code }})</option>
+          <option [value]="d.id">{{ d.name }} ({{ d.hours }})</option>
           }
         </select>
 

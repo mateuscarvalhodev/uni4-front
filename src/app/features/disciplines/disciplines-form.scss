@@ -42,6 +42,29 @@
   gap: 12px;
 }
 
+input,
+select {
+  appearance: none;
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: linear-gradient(0deg, transparent 50%, rgba(255, 255, 255, 0.02) 100%), var(--panel-2);
+  color: var(--text);
+  outline: none;
+  transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+input::placeholder {
+  color: color-mix(in srgb, var(--muted) 75%, transparent);
+}
+
+input:focus,
+select:focus {
+  border-color: var(--focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--focus) 28%, transparent);
+}
+
 @media (min-width: 860px) {
   .grid {
     grid-template-columns: 1fr 280px;

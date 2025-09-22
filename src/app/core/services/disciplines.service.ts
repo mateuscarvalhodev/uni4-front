@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
 export interface Discipline {
   id: number;
   name: string;
-  code: string;
+  description: string;
+  hours: number;
+  semesterId: number;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -26,7 +28,7 @@ export class DisciplinesService {
     return this.http.post<Discipline>(this.base, dto);
   }
 
-  update(id: number, dto: Partial<Omit<Discipline, 'id'>>): Observable<Discipline> {
+  update(id: number, dto: Omit<Discipline, 'id'>): Observable<Discipline> {
     return this.http.put<Discipline>(`${this.base}/${id}`, dto);
   }
 

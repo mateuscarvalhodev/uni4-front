@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { DisciplinesService, Discipline } from '../../core/services/disciplines.service';
+import { SemestersService, Semester } from '../../core/services/semesters.service';
 
 @Component({
   standalone: true,
@@ -14,18 +15,24 @@ import { DisciplinesService, Discipline } from '../../core/services/disciplines.
 export class DisciplinesForm implements OnInit {
   private fb = inject(FormBuilder);
   private svc = inject(DisciplinesService);
+  private semestersSvc = inject(SemestersService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
   private id = signal<number | null>(null);
   isEdit = computed(() => this.id() !== null);
 
+  semesters = signal<Semester[]>([]);
+
   form = this.fb.group({
     name: ['', [Validators.required]],
-    code: ['', [Validators.required]],
+    description: ['', [Validators.required, Validators.minLength(3)]],
+    hours: [0, [Validators.required, Validators.min(1)]],
+    semesterId: [null as number | null, [Validators.required]],
   });
 
   ngOnInit() {
+    this.semestersSvc.list().subscribe((s) => this.semesters.set(s));
     const p = this.route.snapshot.paramMap.get('id');
     if (p) {
       const id = Number(p);
@@ -35,6 +42,7 @@ export class DisciplinesForm implements OnInit {
   }
 
   save() {
+    if (this.form.invalid) return;
     const v = this.form.value as Omit<Discipline, 'id'>;
     if (this.isEdit()) {
       this.svc.update(this.id()!, v).subscribe(() => this.router.navigate(['/app/disciplinas']));
