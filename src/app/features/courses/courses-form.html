@@ -24,9 +24,9 @@
 
       <div class="field">
         <label for="description">Descrição</label>
-        <textarea
+        <input
           id="description"
-          rows="4"
+          type="text"
           formControlName="description"
           placeholder="Ex.: Focus on management, finance and marketing"
           [attr.aria-invalid]="
@@ -34,26 +34,26 @@
           "
           [attr.aria-describedby]="form.controls.description.invalid ? 'desc-err' : null"
           required
-        ></textarea>
+        />
         @if (form.controls.description.touched && form.controls.description.invalid) {
-        <div id="desc-err" class="err">Informe uma descrição.</div>
+        <div id="desc-err" class="err">Informe a descrição.</div>
         }
       </div>
 
       <div class="field">
-        <label for="totalHours">Carga horária total</label>
+        <label for="totalHours">Carga total (horas)</label>
         <input
           id="totalHours"
           type="number"
-          min="1"
           formControlName="totalHours"
+          min="1"
           placeholder="Ex.: 3000"
           [attr.aria-invalid]="form.controls.totalHours.invalid && form.controls.totalHours.touched"
           [attr.aria-describedby]="form.controls.totalHours.invalid ? 'hours-err' : null"
           required
         />
         @if (form.controls.totalHours.touched && form.controls.totalHours.invalid) {
-        <div id="hours-err" class="err">Informe um número maior que zero.</div>
+        <div id="hours-err" class="err">Informe um valor válido (≥ 1).</div>
         }
       </div>
 

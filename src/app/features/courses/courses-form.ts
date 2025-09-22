@@ -2,7 +2,7 @@ import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { CoursesService, Course } from '../../core/services/courses.service';
+import { CoursesService, Course, CreateCourseDTO } from '../../core/services/courses.service';
 
 @Component({
   standalone: true,
@@ -22,7 +22,7 @@ export class CoursesForm implements OnInit {
 
   form = this.fb.group({
     name: ['', [Validators.required]],
-    description: ['', [Validators.required, Validators.minLength(6)]],
+    description: ['', [Validators.required]],
     totalHours: [0, [Validators.required, Validators.min(1)]],
   });
 
@@ -31,18 +31,19 @@ export class CoursesForm implements OnInit {
     if (p) {
       const id = Number(p);
       this.id.set(id);
-      this.svc.get(id).subscribe((c) =>
+      this.svc.get(id).subscribe((c) => {
         this.form.patchValue({
           name: c.name,
           description: c.description,
           totalHours: c.totalHours,
-        })
-      );
+        });
+      });
     }
   }
 
   save() {
-    const v = this.form.value as Omit<Course, 'id' | 'curriculum'>;
+    if (this.form.invalid) return;
+    const v = this.form.value as CreateCourseDTO;
     if (this.isEdit()) {
       this.svc.update(this.id()!, v).subscribe(() => this.router.navigate(['/app/cursos']));
     } else {

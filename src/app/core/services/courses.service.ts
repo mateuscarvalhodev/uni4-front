@@ -8,8 +8,11 @@ export interface Course {
   name: string;
   description: string;
   totalHours: number;
-  curriculum: unknown[];
+  curriculum?: unknown[];
 }
+
+export type CreateCourseDTO = Omit<Course, 'id' | 'curriculum'>;
+export type UpdateCourseDTO = Partial<CreateCourseDTO>;
 
 @Injectable({ providedIn: 'root' })
 export class CoursesService {
@@ -24,11 +27,11 @@ export class CoursesService {
     return this.http.get<Course>(`${this.base}/${id}`);
   }
 
-  create(dto: Omit<Course, 'id' | 'curriculum'>): Observable<Course> {
+  create(dto: CreateCourseDTO): Observable<Course> {
     return this.http.post<Course>(this.base, dto);
   }
 
-  update(id: number, dto: Partial<Omit<Course, 'id'>>): Observable<Course> {
+  update(id: number, dto: UpdateCourseDTO): Observable<Course> {
     return this.http.put<Course>(`${this.base}/${id}`, dto);
   }
 
