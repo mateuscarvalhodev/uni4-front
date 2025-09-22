@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { AuthUser, LoginRequestDTO, RegisterRequestDTO, Role } from './auth.types';
+import { AuthUser, LoginRequestDTO, RegisterRequestDTO } from './auth.types';
 import { Observable, catchError, map, of } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
@@ -39,9 +39,9 @@ export class AuthService {
     return !this.isTokenExpired(t);
   }
 
-  hasAnyRole(...roles: Role[]) {
-    const r = this._user()?.role;
-    return !!r && roles.includes(r);
+  hasAnyRole(...roles: string[]) {
+    const r = (this._user()?.role ?? '').toUpperCase();
+    return roles.map((x) => x.toUpperCase()).includes(r);
   }
 
   login$(username: string, password: string): Observable<boolean> {
@@ -49,24 +49,14 @@ export class AuthService {
       username: (username ?? '').trim(),
       password: (password ?? '').trim(),
     };
-
     return this.http.post<any>(`${environment.authBaseUrl}/login`, body).pipe(
       map((res) => {
         const token: string | undefined =
           res?.accessToken ?? res?.token ?? res?.jwt ?? res?.access_token ?? res?.id_token;
-
         if (!token) return false;
-
         this.persistToken(token);
-
         const fromJwt = this.buildUserFromToken(token);
-        const user: AuthUser = fromJwt ?? {
-          id: 0,
-          name: body.username,
-          email: '',
-          role: 'ALUNO',
-        };
-
+        const user: AuthUser = fromJwt ?? { id: 0, name: body.username, email: '', role: 'ALUNO' };
         this._user.set(user);
         this.persistUser(user);
         return true;
@@ -75,8 +65,18 @@ export class AuthService {
     );
   }
 
-  register$(dto: RegisterRequestDTO): Observable<boolean> {
-    return this.http.post(`${environment.apiBaseUrl}/users/create`, dto).pipe(
+  register$(dto: RegisterRequestDTO & { role: string }): Observable<boolean> {
+    const url = `${environment.apiBaseUrl}/auth/register`;
+    const token = this.token();
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    });
+
+    const roleApi = this.toApiRole(dto.role);
+    const body = { ...dto, role: roleApi };
+
+    return this.http.post(url, body, { headers }).pipe(
       map(() => true),
       catchError(() => of(false))
     );
@@ -132,7 +132,15 @@ export class AuthService {
     }
   }
 
-  private mapKeycloakRole(kcRoles: string[], single?: any, arrMaybe?: any): Role {
+  private toApiRole(roleLike: string): 'administrador' | 'coordenador' | 'professor' | 'aluno' {
+    const r = String(roleLike).toUpperCase();
+    if (r.includes('ADMIN')) return 'administrador';
+    if (r.includes('COORD')) return 'coordenador';
+    if (r.includes('PROF')) return 'professor';
+    return 'aluno';
+  }
+
+  private mapKeycloakRole(kcRoles: string[], single?: any, arrMaybe?: any): any {
     const pool = [
       ...(Array.isArray(kcRoles) ? kcRoles : []),
       ...(Array.isArray(arrMaybe) ? arrMaybe : []),

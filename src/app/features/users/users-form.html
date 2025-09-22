@@ -6,6 +6,10 @@
 
   <div class="card">
     <form [formGroup]="form" (ngSubmit)="save()" class="form" novalidate>
+      @if (error()) {
+      <div class="errbox">{{ error() }}</div>
+      }
+
       <div class="field">
         <label for="name">Nome</label>
         <input
@@ -28,7 +32,7 @@
           id="email"
           type="email"
           formControlName="email"
-          placeholder="email@uni4.com"
+          placeholder="email@uni4.dev"
           [attr.aria-invalid]="form.controls.email.invalid && form.controls.email.touched"
           [attr.aria-describedby]="form.controls.email.invalid ? 'email-err' : null"
           required
@@ -37,6 +41,40 @@
         <div id="email-err" class="err">Informe um email válido.</div>
         }
       </div>
+
+      <div class="field">
+        <label for="username">Username</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="ex.: joaosilva"
+          [attr.aria-invalid]="form.controls.username.invalid && form.controls.username.touched"
+          [attr.aria-describedby]="form.controls.username.invalid ? 'username-err' : null"
+          required
+        />
+        @if (form.controls.username.touched && form.controls.username.invalid) {
+        <div id="username-err" class="err">Informe um username.</div>
+        }
+      </div>
+
+      @if (!isEdit()) {
+      <div class="field">
+        <label for="password">Senha</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="mín. 6 caracteres"
+          [attr.aria-invalid]="form.controls.password.invalid && form.controls.password.touched"
+          [attr.aria-describedby]="form.controls.password.invalid ? 'pass-err' : null"
+          required
+        />
+        @if (form.controls.password.touched && form.controls.password.invalid) {
+        <div id="pass-err" class="err">Informe uma senha válida.</div>
+        }
+      </div>
+      }
 
       <div class="field">
         <label for="role">Papel</label>
@@ -59,7 +97,7 @@
 
       <div class="actions">
         <a class="btn btn--ghost" routerLink="/app/users">Cancelar</a>
-        <button class="btn btn--primary" [disabled]="form.invalid">
+        <button class="btn btn--primary" [disabled]="form.invalid || saving()">
           {{ isEdit() ? 'Salvar alterações' : 'Criar usuário' }}
         </button>
       </div>

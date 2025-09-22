@@ -1,74 +1,92 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { environment } from '../../../environments/environment';
+import { Observable } from 'rxjs';
 import { User, Role } from '../models/user';
+import { AuthService } from '../auth/auth.service';
 
-const STORAGE_KEY = 'uni4.users';
-const seed: User[] = [
-  { id: 1, name: 'Dev Admin', email: 'dev@uni4.com', role: 'ADMIN' },
-  { id: 2, name: 'Ana', email: 'ana@uni4.com', role: 'COORDENADOR' },
-  { id: 3, name: 'Bruno', email: 'bruno@uni4.com', role: 'PROFESSOR' },
-  { id: 4, name: 'Clara', email: 'clara@uni4.com', role: 'ALUNO' },
-];
+type CreateUserDTO = {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+  role: Role;
+};
+
+type UpdateUserDTO = {
+  name: string;
+  email: string;
+  role: Role;
+};
 
 @Injectable({ providedIn: 'root' })
 export class UsersService {
-  private store = new BehaviorSubject<User[]>(this.load());
+  private http = inject(HttpClient);
+  private auth = inject(AuthService);
 
-  private load(): User[] {
-    if (typeof window === 'undefined') return seed;
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
-      return seed;
-    }
-    try {
-      return JSON.parse(raw) as User[];
-    } catch {
-      return seed;
-    }
-  }
-
-  private persist(list: User[]) {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-    }
-  }
-
-  list(): Observable<User[]> {
-    return this.store.asObservable();
-  }
-
-  get(id: number): Observable<User> {
-    const u = this.store.value.find((x) => x.id === id)!;
-    return of(u);
-  }
-
-  create(dto: Omit<User, 'id'>): Observable<User> {
-    const list = [...this.store.value];
-    const id = (list.at(-1)?.id ?? 0) + 1;
-    const user: User = { id, ...dto };
-    list.push(user);
-    this.store.next(list);
-    this.persist(list);
-    return of(user);
-  }
-
-  update(id: number, dto: Partial<Omit<User, 'id'>>): Observable<User> {
-    const list = this.store.value.map((u) => (u.id === id ? { ...u, ...dto } : u));
-    const updated = list.find((u) => u.id === id)!;
-    this.store.next(list);
-    this.persist(list);
-    return of(updated);
-  }
-
-  remove(id: number): Observable<void> {
-    const list = this.store.value.filter((u) => u.id !== id);
-    this.store.next(list);
-    this.persist(list);
-    return of(void 0);
-  }
+  private api = environment.apiBaseUrl;
+  private usersBase = `${this.api}/users`;
 
   roles(): Role[] {
     return ['ADMIN', 'COORDENADOR', 'PROFESSOR', 'ALUNO'];
+  }
+
+  list(): Observable<User[]> {
+    return this.http.get<User[]>(this.usersBase);
+  }
+
+  get(id: number): Observable<User> {
+    return this.http.get<User>(`${this.usersBase}/${id}`);
+  }
+
+  create(dto: CreateUserDTO): Observable<User> {
+    const url = `${this.api}/auth/register`;
+    const headers = this.buildAuthHeaders();
+
+    const body = {
+      name: dto.name,
+      username: dto.username,
+      email: dto.email,
+      password: dto.password,
+      role: this.mapRoleToApi(dto.role),
+    };
+
+    return this.http.post<User>(url, body, { headers });
+  }
+
+  update(id: number, dto: UpdateUserDTO): Observable<User> {
+    const headers = this.buildAuthHeaders();
+    const body = {
+      name: dto.name,
+      email: dto.email,
+      role: this.mapRoleToApi(dto.role),
+    };
+    return this.http.put<User>(`${this.usersBase}/${id}`, body, { headers });
+  }
+
+  remove(id: number): Observable<void> {
+    const headers = this.buildAuthHeaders();
+    return this.http.delete<void>(`${this.usersBase}/${id}`, { headers });
+  }
+
+  private buildAuthHeaders(): HttpHeaders {
+    const token = this.auth.token();
+    let headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    if (token) headers = headers.set('Authorization', `Bearer ${token}`);
+    return headers;
+  }
+
+  private mapRoleToApi(role: Role): 'administrador' | 'coordenador' | 'professor' | 'aluno' {
+    switch (role) {
+      case 'ADMIN':
+        return 'administrador';
+      case 'COORDENADOR':
+        return 'coordenador';
+      case 'PROFESSOR':
+        return 'professor';
+      case 'ALUNO':
+      default:
+        return 'aluno';
+    }
   }
 }
