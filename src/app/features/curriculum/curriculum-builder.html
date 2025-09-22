@@ -12,15 +12,25 @@
       >
         <option value="" disabled>Selecione um curso</option>
         @for (c of courses(); track c.id) {
-        <option [value]="c.id">{{ c.name }} ({{ c.totalHours }})</option>
+        <option [value]="c.id">{{ c.name }}</option>
         }
       </select>
+
       <a class="btn" routerLink="/app/cursos">Gerenciar cursos</a>
     </div>
   </header>
 
   @if (!courseId()) {
   <div class="empty">Selecione um curso para montar a matriz.</div>
+  } @else if (loading()) {
+  <div class="empty loader">Carregando matriz…</div>
+  } @else if (error()) {
+  <div class="error">
+    <strong>Falha ao carregar a matriz.</strong>
+    <div>{{ error() }}</div>
+  </div>
+  } @else if (!curriculum() || items().length === 0) {
+  <div class="empty">Nenhuma matriz encontrada para o curso selecionado.</div>
   } @else {
   <div class="grid">
     @for (s of items(); track trackBySem($index, s)) {
@@ -28,32 +38,19 @@
       <div class="col__head">Semestre {{ s.number }}</div>
 
       <div class="list">
-        @if (s.disciplines.length) { @for (d of s.disciplines; track d.itemId) {
+        @if (s.subjects.length) { @for (d of s.subjects; track trackBySub($index, d)) {
         <div class="row">
-          <div class="row__name">{{ d.discipline.name }}</div>
-          <div class="row__code">{{ d.discipline.hours }}</div>
-          <button class="btn btn--danger sm" type="button" (click)="remove(d.itemId)">
+          <div class="row__name">{{ d.name }}</div>
+          <div class="row__code">
+            <span class="badge">{{ d.hours }}h</span>
+          </div>
+          <button class="btn btn--danger sm" type="button" (click)="removeSubject(d.id)">
             Remover
           </button>
         </div>
         } } @else {
         <div class="muted">Sem disciplinas.</div>
         }
-      </div>
-
-      <div class="adder">
-        <select
-          [value]="selection()[s.id] ?? ''"
-          #sel
-          (change)="onSelectDiscipline(s.id, sel.value)"
-        >
-          <option value="" disabled>Adicionar disciplina...</option>
-          @for (d of disciplines(); track d.id) {
-          <option [value]="d.id">{{ d.name }} ({{ d.hours }})</option>
-          }
-        </select>
-
-        <button class="btn btn--primary sm" type="button" (click)="add(s.id)">Adicionar</button>
       </div>
     </div>
     }

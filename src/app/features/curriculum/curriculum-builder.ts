@@ -1,10 +1,15 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { CoursesService, Course } from '../../core/services/courses.service';
-import { SemestersService, Semester } from '../../core/services/semesters.service';
-import { DisciplinesService, Discipline } from '../../core/services/disciplines.service';
-import { CurriculumService, SemesterWithDisciplines } from '../../core/services/curriculum.service';
+import {
+  CurriculumService,
+  Curriculum,
+  CurriculumSemester,
+  CurriculumSubject,
+} from '../../core/services/curriculum.service';
+import { DisciplinesService } from '../../core/services/disciplines.service';
+import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -17,57 +22,54 @@ export class CurriculumBuilder implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private coursesSvc = inject(CoursesService);
-  private semestersSvc = inject(SemestersService);
-  private disciplinesSvc = inject(DisciplinesService);
   private curriculumSvc = inject(CurriculumService);
+  private subjectsSvc = inject(DisciplinesService);
 
   courses = signal<Course[]>([]);
-  disciplines = signal<Discipline[]>([]);
   courseId = signal<number | null>(null);
-  semesters = signal<Semester[]>([]);
-  items = signal<SemesterWithDisciplines[]>([]);
-  selection = signal<Record<number, number | null>>({});
+  curriculum = signal<Curriculum | null>(null);
+
+  loading = signal<boolean>(false);
+  error = signal<string | null>(null);
+
+  items = computed<CurriculumSemester[]>(() => {
+    const cur = this.curriculum();
+    if (!cur) return [];
+    return [...(cur.semesters ?? [])].sort((a, b) => a.number - b.number);
+  });
 
   ngOnInit() {
     this.coursesSvc.list().subscribe((cs) => this.courses.set(cs));
-    this.disciplinesSvc.list().subscribe((ds) => this.disciplines.set(ds));
 
-    const param = this.route.snapshot.paramMap.get('courseId');
-    if (param) this.courseId.set(Number(param));
-
-    this.loadCourseData();
+    this.route.paramMap.subscribe((params) => {
+      const param = params.get('courseId');
+      this.courseId.set(param ? Number(param) : null);
+      this.loadForSelectedCourse();
+    });
   }
 
-  private loadCourseData() {
+  private loadForSelectedCourse() {
     const id = this.courseId();
+
+    this.curriculum.set(null);
+    this.error.set(null);
+
     if (!id) {
-      this.semesters.set([]);
-      this.items.set([]);
+      this.loading.set(false);
       return;
     }
 
-    this.semestersSvc.byCurriculum(id).subscribe((sem) => {
-      this.semesters.set(sem);
-
-      const mapSel: Record<number, number | null> = {};
-      sem.forEach((s) => (mapSel[s.id] = null));
-      this.selection.set(mapSel);
-
-      this.curriculumSvc.list().subscribe((allItems) => {
-        const ds = this.disciplines();
-        const semVM: SemesterWithDisciplines[] = sem.map((s) => ({
-          ...s,
-          disciplines: allItems
-            .filter((ci) => ci.semesterId === s.id)
-            .map((ci) => ({
-              itemId: ci.id,
-              discipline: ds.find((d) => d.id === ci.disciplineId)!,
-            }))
-            .filter((x) => !!x.discipline),
-        }));
-        this.items.set(semVM);
+    this.loading.set(true);
+    this.curriculumSvc
+      .byCourse(id)
+      .pipe(finalize(() => this.loading.set(false)))
+      .subscribe({
+        next: (cur) => this.curriculum.set(cur),
+        error: (err) => {
+          console.error('[curriculum] load error', err);
+          this.error.set('Erro no servidor. Verifique os logs do backend.');
+        },
       });
-    });
   }
 
   onCourseChange(value: string) {
@@ -76,27 +78,15 @@ export class CurriculumBuilder implements OnInit {
     this.courseId.set(next);
     if (next) this.router.navigate(['/app/matriz', next]);
     else this.router.navigate(['/app/matriz']);
-    this.loadCourseData();
+    this.loadForSelectedCourse();
   }
 
-  onSelectDiscipline(semesterId: number, value: string) {
-    const num = value ? Number(value) : NaN;
-    const current = { ...this.selection() };
-    current[semesterId] = isNaN(num) ? null : num;
-    this.selection.set(current);
+  removeSubject(subjectId: number) {
+    if (!subjectId) return;
+    if (!confirm('Remover disciplina deste semestre?')) return;
+    this.subjectsSvc.remove(subjectId).subscribe(() => this.loadForSelectedCourse());
   }
 
-  add(semesterId: number) {
-    const discId = this.selection()[semesterId];
-    if (!discId) return;
-    this.curriculumSvc.add(semesterId, discId).subscribe(() => this.loadCourseData());
-  }
-
-  remove(itemId: number) {
-    if (confirm('Remover disciplina deste semestre?')) {
-      this.curriculumSvc.remove(itemId).subscribe(() => this.loadCourseData());
-    }
-  }
-
-  trackBySem = (_: number, s: SemesterWithDisciplines) => s.id;
+  trackBySem = (_: number, s: CurriculumSemester) => s.id;
+  trackBySub = (_: number, d: CurriculumSubject) => d.id;
 }
