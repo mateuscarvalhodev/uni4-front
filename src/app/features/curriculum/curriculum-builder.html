@@ -29,9 +29,39 @@
     <strong>Falha ao carregar a matriz.</strong>
     <div>{{ error() }}</div>
   </div>
-  } @else if (!curriculum() || items().length === 0) {
-  <div class="empty">Nenhuma matriz encontrada para o curso selecionado.</div>
-  } @else {
+  } @else { @if (!curriculum()) {
+  <div class="empty">
+    <div>Nenhuma matriz encontrada para o curso selecionado.</div>
+
+    <div class="adder" style="margin-top: 10px">
+      <div class="field">
+        <label for="year">Ano letivo</label>
+        <input
+          id="year"
+          type="text"
+          #yearInput
+          [value]="defaultYear"
+          placeholder="Ex.: 2025"
+          (keyup.enter)="createCurriculum(yearInput.value)"
+        />
+      </div>
+
+      <button
+        class="btn btn--primary"
+        type="button"
+        [disabled]="creating()"
+        (click)="createCurriculum(yearInput.value)"
+        aria-label="Criar matriz curricular"
+        title="Criar matriz curricular"
+      >
+        {{ creating() ? 'Criando…' : 'Criar matriz' }}
+      </button>
+    </div>
+  </div>
+  } @else { @if (items().length === 0) {
+  <div class="empty">Matriz criada, mas ainda sem semestres.</div>
+  }
+
   <div class="grid">
     @for (s of items(); track trackBySem($index, s)) {
     <div class="col">
@@ -55,5 +85,5 @@
     </div>
     }
   </div>
-  }
+  } }
 </section>

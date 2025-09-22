@@ -1,6 +1,8 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { finalize } from 'rxjs';
+
 import { CoursesService, Course } from '../../core/services/courses.service';
 import {
   CurriculumService,
@@ -9,7 +11,6 @@ import {
   CurriculumSubject,
 } from '../../core/services/curriculum.service';
 import { DisciplinesService } from '../../core/services/disciplines.service';
-import { finalize } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -21,6 +22,7 @@ import { finalize } from 'rxjs';
 export class CurriculumBuilder implements OnInit {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+
   private coursesSvc = inject(CoursesService);
   private curriculumSvc = inject(CurriculumService);
   private subjectsSvc = inject(DisciplinesService);
@@ -30,7 +32,10 @@ export class CurriculumBuilder implements OnInit {
   curriculum = signal<Curriculum | null>(null);
 
   loading = signal<boolean>(false);
+  creating = signal<boolean>(false);
   error = signal<string | null>(null);
+
+  readonly defaultYear = String(new Date().getFullYear());
 
   items = computed<CurriculumSemester[]>(() => {
     const cur = this.curriculum();
@@ -79,6 +84,29 @@ export class CurriculumBuilder implements OnInit {
     if (next) this.router.navigate(['/app/matriz', next]);
     else this.router.navigate(['/app/matriz']);
     this.loadForSelectedCourse();
+  }
+
+  createCurriculum(yearLike?: string) {
+    const course = this.courseId();
+    if (!course) return;
+
+    const year = (yearLike || this.defaultYear).trim();
+    if (!/^\d{4}$/.test(year)) {
+      return;
+    }
+
+    this.creating.set(true);
+    this.curriculumSvc
+      .create({ academicYear: year, courseId: course })
+      .pipe(finalize(() => this.creating.set(false)))
+      .subscribe({
+        next: (created) => {
+          this.loadForSelectedCourse();
+        },
+        error: (err) => {
+          console.error('[curriculum] create error', err);
+        },
+      });
   }
 
   removeSubject(subjectId: number) {
