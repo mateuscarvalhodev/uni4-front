@@ -10,9 +10,11 @@
         <label for="course">Curso</label>
         <select
           id="course"
-          formControlName="courseId"
-          [attr.aria-invalid]="form.controls.courseId.invalid && form.controls.courseId.touched"
-          [attr.aria-describedby]="form.controls.courseId.invalid ? 'course-err' : null"
+          formControlName="curriculumId"
+          [attr.aria-invalid]="
+            form.controls.curriculumId.invalid && form.controls.curriculumId.touched
+          "
+          [attr.aria-describedby]="form.controls.curriculumId.invalid ? 'course-err' : null"
           required
         >
           <option [ngValue]="null" disabled>Selecione...</option>
@@ -20,25 +22,26 @@
           <option [value]="c.id">{{ c.name }} ({{ c.totalHours }}h)</option>
           }
         </select>
-        @if (form.controls.courseId.touched && form.controls.courseId.invalid) {
+        @if (form.controls.curriculumId.touched && form.controls.curriculumId.invalid) {
         <div id="course-err" class="err">Selecione um curso.</div>
         }
       </div>
-
       <div class="field">
-        <label for="index">Índice do semestre</label>
-        <input
-          id="index"
-          type="number"
-          formControlName="index"
-          min="1"
-          placeholder="Ex.: 1"
-          [attr.aria-invalid]="form.controls.index.invalid && form.controls.index.touched"
-          [attr.aria-describedby]="form.controls.index.invalid ? 'index-err' : null"
+        <label for="number">Número do semestre</label>
+        <select
+          id="number"
+          formControlName="number"
+          [attr.aria-invalid]="form.controls.number.invalid && form.controls.number.touched"
+          [attr.aria-describedby]="form.controls.number.invalid ? 'index-err' : null"
           required
-        />
-        @if (form.controls.index.touched && form.controls.index.invalid) {
-        <div id="index-err" class="err">Informe um índice válido (≥ 1).</div>
+        >
+          <option [ngValue]="null" disabled>Selecione...</option>
+          <option [ngValue]="1">1</option>
+          <option [ngValue]="2">2</option>
+        </select>
+
+        @if (form.controls.number.touched && form.controls.number.invalid) {
+        <div id="index-err" class="err">Selecione 1 ou 2.</div>
         }
       </div>
 

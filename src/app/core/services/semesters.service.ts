@@ -5,9 +5,13 @@ import { Observable, map } from 'rxjs';
 
 export interface Semester {
   id: number;
-  courseId: number;
-  index: number;
+  number: number;
+  curriculumId: number;
+  subjects?: unknown[];
 }
+
+export type CreateSemesterDTO = Omit<Semester, 'id' | 'subjects'>;
+export type UpdateSemesterDTO = Partial<CreateSemesterDTO>;
 
 @Injectable({ providedIn: 'root' })
 export class SemestersService {
@@ -15,25 +19,27 @@ export class SemestersService {
   private base = `${(environment as any).coreBaseUrl || environment.apiBaseUrl}/semesters`;
 
   list(): Observable<Semester[]> {
-    return this.http.get<Semester[]>(this.base);
+    return this.http
+      .get<Semester[]>(this.base)
+      .pipe(map((rows) => rows.sort((a, b) => a.number - b.number)));
   }
 
-  byCourse(courseId: number): Observable<Semester[]> {
-    const params = new HttpParams().set('courseId', String(courseId));
+  byCurriculum(curriculumId: number): Observable<Semester[]> {
+    const params = new HttpParams().set('curriculumId', String(curriculumId));
     return this.http
       .get<Semester[]>(this.base, { params })
-      .pipe(map((rows) => rows.sort((a, b) => a.index - b.index)));
+      .pipe(map((rows) => rows.sort((a, b) => a.number - b.number)));
   }
 
   get(id: number): Observable<Semester> {
     return this.http.get<Semester>(`${this.base}/${id}`);
   }
 
-  create(dto: Omit<Semester, 'id'>): Observable<Semester> {
+  create(dto: CreateSemesterDTO): Observable<Semester> {
     return this.http.post<Semester>(this.base, dto);
   }
 
-  update(id: number, dto: Partial<Omit<Semester, 'id'>>): Observable<Semester> {
+  update(id: number, dto: UpdateSemesterDTO): Observable<Semester> {
     return this.http.put<Semester>(`${this.base}/${id}`, dto);
   }
 

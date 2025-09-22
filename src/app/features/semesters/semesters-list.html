@@ -11,7 +11,7 @@
       >
         <option value="all">Todos os cursos</option>
         @for (c of coursesOptions(); track c.id) {
-        <option [value]="c.id">{{ c.name }} ({{ c.totalHours }})</option>
+        <option [value]="c.id">{{ c.name }} ({{ c.totalHours }}h)</option>
         }
       </select>
       <a class="btn btn--primary" routerLink="/app/semestres/new">Novo</a>
@@ -22,7 +22,7 @@
     <div class="table">
       <div class="table__head">
         <div>Curso</div>
-        <div>Índice</div>
+        <div>Número</div>
         <div class="right">Ações</div>
       </div>
 
@@ -32,7 +32,7 @@
           <div class="course__name">{{ s.courseName }}</div>
         </div>
         <div class="index">
-          <span class="badge">{{ s.index }}</span>
+          <span class="badge">{{ s.number }}</span>
         </div>
         <div class="right">
           <a class="btn" [routerLink]="['/app/semestres', s.id, 'edit']">Editar</a>

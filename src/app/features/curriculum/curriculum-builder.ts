@@ -46,8 +46,9 @@ export class CurriculumBuilder implements OnInit {
       return;
     }
 
-    this.semestersSvc.byCourse(id).subscribe((sem) => {
+    this.semestersSvc.byCurriculum(id).subscribe((sem) => {
       this.semesters.set(sem);
+
       const mapSel: Record<number, number | null> = {};
       sem.forEach((s) => (mapSel[s.id] = null));
       this.selection.set(mapSel);

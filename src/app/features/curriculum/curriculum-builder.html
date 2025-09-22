@@ -25,7 +25,7 @@
   <div class="grid">
     @for (s of items(); track trackBySem($index, s)) {
     <div class="col">
-      <div class="col__head">Semestre {{ s.index }}</div>
+      <div class="col__head">Semestre {{ s.number }}</div>
 
       <div class="list">
         @if (s.disciplines.length) { @for (d of s.disciplines; track d.itemId) {

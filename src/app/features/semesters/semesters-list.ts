@@ -21,18 +21,26 @@ export class SemestersList implements OnInit {
 
   vm = computed(() => {
     const cid = this.filterCourseId();
-    const rows = cid === 'all' ? this.list() : this.list().filter((s) => s.courseId === cid);
+    const rows = cid === 'all' ? this.list() : this.list().filter((s) => s.curriculumId === cid);
     const cmap = new Map(this.courses().map((c) => [c.id, c.name]));
-    return rows.map((s) => ({ ...s, courseName: cmap.get(s.courseId) || `Curso ${s.courseId}` }));
+    return rows.map((s) => ({
+      ...s,
+      courseName: cmap.get(s.curriculumId) || `Curso ${s.curriculumId}`,
+    }));
   });
 
   ngOnInit() {
+    this.reload();
+  }
+
+  reload() {
     this.svc.list().subscribe((d) => this.list.set(d));
     this.coursesSvc.list().subscribe((cs) => this.courses.set(cs));
   }
 
   remove(id: number) {
-    if (confirm('Excluir semestre?')) this.svc.remove(id).subscribe();
+    if (!confirm('Excluir semestre?')) return;
+    this.svc.remove(id).subscribe(() => this.reload());
   }
 
   setFilter(value: string) {
