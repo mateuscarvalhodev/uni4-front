@@ -28,3 +28,10 @@ depois rode
 npm start
 
 ```
+
+## logue na conta
+
+```json
+"username": "admin1",
+"senha": "123456"
+```
