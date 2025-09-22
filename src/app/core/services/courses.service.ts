@@ -6,7 +6,9 @@ import { Observable } from 'rxjs';
 export interface Course {
   id: number;
   name: string;
-  code: string;
+  description: string;
+  totalHours: number;
+  curriculum: unknown[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -22,7 +24,7 @@ export class CoursesService {
     return this.http.get<Course>(`${this.base}/${id}`);
   }
 
-  create(dto: Omit<Course, 'id'>): Observable<Course> {
+  create(dto: Omit<Course, 'id' | 'curriculum'>): Observable<Course> {
     return this.http.post<Course>(this.base, dto);
   }
 

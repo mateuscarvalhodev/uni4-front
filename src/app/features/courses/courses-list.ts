@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { CoursesService, Course } from '../../core/services/courses.service';
@@ -12,16 +12,29 @@ import { CoursesService, Course } from '../../core/services/courses.service';
 })
 export class CoursesList implements OnInit {
   private svc = inject(CoursesService);
-  private courses = signal<Course[]>([]);
-  vm = computed(() => this.courses());
+  list = signal<Course[]>([]);
+  expanded = signal<Record<number, boolean>>({});
 
   ngOnInit() {
-    this.svc.list().subscribe((d) => this.courses.set(d));
+    this.reload();
+  }
+
+  reload() {
+    this.svc.list().subscribe((rows) => this.list.set(rows));
+  }
+
+  toggle(id: number) {
+    const m = { ...this.expanded() };
+    m[id] = !m[id];
+    this.expanded.set(m);
   }
 
   remove(id: number) {
-    if (confirm('Excluir curso?')) {
-      this.svc.remove(id).subscribe();
-    }
+    if (!confirm('Excluir curso?')) return;
+    this.svc.remove(id).subscribe(() => this.reload());
+  }
+
+  isOpen(id: number) {
+    return !!this.expanded()[id];
   }
 }

@@ -2,6 +2,7 @@
   <header class="page__header">
     <h2>Cursos</h2>
     <div class="actions">
+      <button class="btn" type="button" (click)="reload()">Recarregar</button>
       <a class="btn btn--primary" routerLink="/app/cursos/new">Novo</a>
     </div>
   </header>
@@ -10,22 +11,37 @@
     <div class="table">
       <div class="table__head">
         <div>Nome</div>
-        <div>Código</div>
+        <div>Carga total</div>
         <div class="right">Ações</div>
       </div>
 
-      @if (vm().length) { @for (c of vm(); track c.id) {
+      @if (list().length > 0) { @for (c of list(); track c.id) {
       <div class="table__row">
-        <div class="c-name">{{ c.name }}</div>
+        <button
+          class="row__title"
+          type="button"
+          (click)="toggle(c.id)"
+          [attr.aria-expanded]="isOpen(c.id)"
+        >
+          <span class="caret" [class.open]="isOpen(c.id)"></span>
+          <span>{{ c.name }}</span>
+        </button>
+
         <div>
-          <span class="chip">{{ c.code }}</span>
+          <span class="chip">{{ c.totalHours }}h</span>
         </div>
+
         <div class="right">
           <a class="btn" [routerLink]="['/app/cursos', c.id, 'edit']">Editar</a>
           <button class="btn btn--danger" type="button" (click)="remove(c.id)">Excluir</button>
         </div>
       </div>
-      } } @else {
+
+      @if (isOpen(c.id)) {
+      <div class="table__expand">
+        <div class="desc">{{ c.description || 'Sem descrição.' }}</div>
+      </div>
+      } } } @else {
       <div class="empty">Nenhum curso cadastrado.</div>
       }
     </div>

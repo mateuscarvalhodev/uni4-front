@@ -12,7 +12,7 @@
       >
         <option value="" disabled>Selecione um curso</option>
         @for (c of courses(); track c.id) {
-        <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+        <option [value]="c.id">{{ c.name }} ({{ c.totalHours }})</option>
         }
       </select>
       <a class="btn" routerLink="/app/cursos">Gerenciar cursos</a>

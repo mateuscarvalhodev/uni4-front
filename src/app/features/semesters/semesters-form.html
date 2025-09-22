@@ -17,7 +17,7 @@
         >
           <option [ngValue]="null" disabled>Selecione...</option>
           @for (c of courses(); track c.id) {
-          <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+          <option [value]="c.id">{{ c.name }} ({{ c.totalHours }}h)</option>
           }
         </select>
         @if (form.controls.courseId.touched && form.controls.courseId.invalid) {
@@ -40,7 +40,6 @@
         @if (form.controls.index.touched && form.controls.index.invalid) {
         <div id="index-err" class="err">Informe um índice válido (≥ 1).</div>
         }
-        <p class="hint"></p>
       </div>
 
       <div class="actions">

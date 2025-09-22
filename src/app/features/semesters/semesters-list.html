@@ -11,7 +11,7 @@
       >
         <option value="all">Todos os cursos</option>
         @for (c of coursesOptions(); track c.id) {
-        <option [value]="c.id">{{ c.name }} ({{ c.code }})</option>
+        <option [value]="c.id">{{ c.name }} ({{ c.totalHours }})</option>
         }
       </select>
       <a class="btn btn--primary" routerLink="/app/semestres/new">Novo</a>
