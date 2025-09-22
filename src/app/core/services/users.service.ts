@@ -32,11 +32,13 @@ export class UsersService {
   }
 
   list(): Observable<User[]> {
-    return this.http.get<User[]>(this.usersBase);
+    const headers = this.buildAuthHeaders();
+    return this.http.get<User[]>(this.usersBase, { headers });
   }
 
   get(id: number): Observable<User> {
-    return this.http.get<User>(`${this.usersBase}/${id}`);
+    const headers = this.buildAuthHeaders();
+    return this.http.get<User>(`${this.usersBase}/${id}`, { headers });
   }
 
   create(dto: CreateUserDTO): Observable<User> {
